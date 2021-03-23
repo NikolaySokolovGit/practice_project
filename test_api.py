@@ -2,6 +2,7 @@ import json
 from datetime import datetime, timedelta
 
 import pytest
+import requests
 
 from utils import api_purchase_by_client
 
@@ -95,4 +96,25 @@ class TestPurchase:
         assert purchase.status_code == 404, f'Код статуса {purchase.status_code} вместо 404'
         assert purchase.text == 'Unexisting client id message text', f'Некорректное сообщение ошибки"{purchase.text}"'
 
+    def test_empty_input(self):
+        """
+        Кейс с пустым вводом
+        """
+        response = requests.post('service/v1/item/purchase/by-client')
+        assert response.status_code == 400, f'Код статуса {response.status_code} вместо 400'
+        assert response.text == 'Empty data error message', f'Некорректное сообщение ошибки"{response.text}"'
+
+    @pytest.mark.parametrize('client_id, item_id',
+                             [pytest.param('', 'item_id')],
+                             [pytest.param('client_id', '')],
+                             )
+    def test_empty_key(self, client_id, item_id):
+        """
+        Кейс с пустым ключом
+        :param client_id: id клиента
+        :param item_id: id айтема
+        """
+        response = api_purchase_by_client(client_id, item_id)
+        assert response.status_code == 400, f'Код статуса {response.status_code} вместо 400'
+        assert response.text == 'Missing metadata ket error message', f'Некорректное сообщение ошибки"{response.text}"'
 
