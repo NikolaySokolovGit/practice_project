@@ -10,6 +10,7 @@ from utils import api_purchase_by_client
 class TestPurchase:
     @pytest.mark.parametrize('name, surname, phone, address, item_id, price, quantity',
                              [pytest.param('Ivan', 'Ivanov', '+1 123 456 78 90', 'Moscow', 'item_1', 100500, 1)],
+                             [pytest.param('John', 'Johnson', '+5 123 456 78 90', 'Moscow', 'item_1', 100.500, 12)],
                              )
     def test_one_item_exists(self, client, order, name, surname, phone, address, item_id, price, quantity):
         """
@@ -106,7 +107,9 @@ class TestPurchase:
 
     @pytest.mark.parametrize('client_id, item_id',
                              [pytest.param('', 'item_id')],
+                             [pytest.param(None, 'item_id')],
                              [pytest.param('client_id', '')],
+                             [pytest.param('client_id', None)],
                              )
     def test_empty_key(self, client_id, item_id):
         """
